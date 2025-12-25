@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตารางแพทย์ SMC รพ.อุดรธานี - มกราคม 2569</title>
+    <!-- Google Fonts for modern Thai look -->
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=Prompt:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #E91E63; /* Pink Udon Thani Hospital Theme */
+            --light-pink: #FCE4EC;
+            --white: #FFFFFF;
+            --black: #000000;
+            --text-dark: #333333;
+            --gray-bg: #f5f5f5;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--gray-bg);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            padding-bottom: 50px;
+        }
+
+        /* --- Header Section with Mourning Ribbon --- */
+        header {
+            background-color: var(--white);
+            color: var(--primary-pink);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--primary-pink);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.2rem;
+            margin: 0;
+            font-weight: 600;
+            color: var(--black); /* Black text for header as per mourning theme */
+        }
+
+        header h2 {
+            font-size: 1rem;
+            margin: 5px 0 0;
+            color: var(--primary-pink);
+        }
+
+        header h3 {
+            font-size: 0.9rem;
+            margin: 5px 0 0;
+            color: #666;
+        }
+
+        /* Black Ribbon CSS */
+        .mourning-ribbon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            overflow: hidden;
+        }
+        .mourning-ribbon::before {
+            content: "ไว้อาลัย";
+            position: absolute;
+            width: 120%;
+            height: 25px;
+            background-color: var(--black);
+            color: #fff;
+            text-align: center;
+            font-size: 10px;
+            line-height: 25px;
+            transform: rotate(45deg) translateY(-20px) translateX(15px);
+            top: 15px;
+            right: -10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* --- Navigation Tabs (Weeks) --- */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            background-color: var(--white);
+            padding: 10px 5px;
+            gap: 5px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .nav-btn {
+            background-color: var(--light-pink);
+            border: 1px solid var(--primary-pink);
+            color: var(--primary-pink);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Prompt', sans-serif;
+            flex: 1;
+            max-width: 80px;
+            text-align: center;
+        }
+
+        .nav-btn.active {
+            background-color: var(--primary-pink);
+            color: var(--white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* --- Content Container --- */
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .week-section {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s;
+        }
+
+        .week-section.active {
+            display: block;
+        }
+
+        /* --- Day Card Design --- */
+        .day-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-left: 5px solid var(--black); /* Black Accent */
+        }
+
+        .card-header {
+            background-color: var(--light-pink);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .date-badge {
+            font-family: 'Prompt', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-pink);
+        }
+
+        .day-name {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .card-body {
+            padding: 10px 15px;
+        }
+
+        .dept-row {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 8px;
+        }
+        
+        .dept-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .dept-label {
+            font-weight: 600;
+            color: var(--black);
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+        }
+
+        .dept-label::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-pink);
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .doc-list {
+            font-size: 0.95rem;
+            color: #444;
+            padding-left: 16px;
+            line-height: 1.4;
+        }
+
+        .remark {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #777;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="mourning-ribbon"></div>
+        <h1>ตารางแพทย์ออกตรวจ SMC</h1>
+        <h2>โรงพยาบาลอุดรธานี</h2>
+        <h3>เดือนมกราคม 2569</h3>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="nav-btn active" onclick="openWeek(this, 'week1')">สัปดาห์ 1</button>
+        <button class="nav-btn" onclick="openWeek(this, 'week2')">สัปดาห์ 2</button>
+        <button class="nav-btn" onclick="openWeek(this, 'week3')">สัปดาห์ 3</button>
+        <button class="nav-btn" onclick="openWeek(this, 'week4')">สัปดาห์ 4</button>
+    </div>
+
+    <div class="container">
+
+        <!-- WEEK 1 -->
+        <div id="week1" class="week-section active">
+            <!-- Mon 5 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">5 ม.ค.</span>
+                    <span class="day-name">วันจันทร์</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.บรรพต, นพ.ศราวุฒิ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.หทัยภัทร</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.วไลพร</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.วิสิษฐ์, นพ.กิตติเชษฐ์, พญ.สุพรรณี, พญ.พิชชาภา, นพ.คณา</span></div>
+                    <div class="dept-row"><span class="dept-label">หู คอ จมูก</span><span class="doc-list">นพ.กนกพล</span></div>
+                </div>
+            </div>
+
+            <!-- Tue 6 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">6 ม.ค.</span>
+                    <span class="day-name">วันอังคาร</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.บรรพต</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.ภัทริกาญจน์</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.วไลพร</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.ชุติพงศ์, นพ.ประพันธ์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.อัครวัต, พญ.ธวัลย์, พญ.ศุภกร, พญ.พัชริดา</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.สุทธตา</span></div>
+                    <div class="dept-row"><span class="dept-label">หู คอ จมูก</span><span class="doc-list">นพ.เจริญ</span></div>
+                </div>
+            </div>
+
+            <!-- Wed 7 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">7 ม.ค.</span>
+                    <span class="day-name">วันพุธ</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.ฐาปกรณ์, นพ.กาญจน์, นพ.สัมฤทธิ์</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.วชิรวุฒิ</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.จตุรัศมิ์, พญ.ภัทธิยา</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">พญ.วิริญจ์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.อนุชิต</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.นพรัตน์</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชผู้ใหญ่</span><span class="doc-list">นพ.สมยศ</span></div>
+                </div>
+            </div>
+
+            <!-- Thu 8 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">8 ม.ค.</span>
+                    <span class="day-name">วันพฤหัสบดี</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.วศิน, พญ.ฐิติภัทร, นพ.ภิญโญ, นพ.สัมฤทธิ์, นพ.มากคติ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.ภูริณัฐ</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.ธนภัทร</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">พญ.เพ็ญแข, พญ.ธวัลย์, นพ.วิสิษฐ์, พญ.สิรินุช</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.ทักษิณา</span></div>
+                </div>
+            </div>
+
+            <!-- Fri 9 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">9 ม.ค.</span>
+                    <span class="day-name">วันศุกร์</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">พญ.เขมิกา, นพ.ณัฐวุฒิ, นพ.มากคติ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.ณัฐนันท์</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.วินัย, นพ.ภาณุนันท์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">พญ.เพ็ญแข, นพ.วิสิษฐ์, พญ.สิรินุช</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEEK 2 -->
+        <div id="week2" class="week-section">
+            <!-- Mon 12 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">12 ม.ค.</span>
+                    <span class="day-name">วันจันทร์</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.บรรพต</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.ภูริณัฐ</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.วไลพร</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.สมควร</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.วิสิษฐ์, พญ.สุพรรณี, พญ.พิชชาภา, นพ.คณา</span></div>
+                    <div class="dept-row"><span class="dept-label">หู คอ จมูก</span><span class="doc-list">นพ.กนกพล</span></div>
+                </div>
+            </div>
+
+            <!-- Tue 13 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">13 ม.ค.</span>
+                    <span class="day-name">วันอังคาร</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.บรรพต, นพ.สมสิทธิ์</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.ภัทริกาญจน์</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.วไลพร</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.ชุติพงศ์, นพ.ประพันธ์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.อัครวัต, พญ.ธวัลย์, พญ.ศุภกร, พญ.พัชริดา</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.สุทธตา</span></div>
+                    <div class="dept-row"><span class="dept-label">หู คอ จมูก</span><span class="doc-list">นพ.เจริญ</span></div>
+                </div>
+            </div>
+
+            <!-- Wed 14 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">14 ม.ค.</span>
+                    <span class="day-name">วันพุธ</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.ฐาปกรณ์, นพ.สัมฤทธิ์</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.วชิรวุฒิ</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.จตุรัศมิ์, พญ.ภัทธิยา</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.สรพงษ์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.อนุชิต</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.นพรัตน์</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชผู้ใหญ่</span><span class="doc-list">นพ.สมยศ</span></div>
+                </div>
+            </div>
+
+            <!-- Thu 15 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">15 ม.ค.</span>
+                    <span class="day-name">วันพฤหัสบดี</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.วศิน, พญ.ฐิติภัทร, นพ.สัมฤทธิ์, นพ.มากคติ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.ภูริณัฐ</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.ธนภัทร</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">พญ.เพ็ญแข, พญ.ธวัลย์, นพ.วิสิษฐ์</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.ทักษิณา</span></div>
+                </div>
+            </div>
+
+            <!-- Fri 16 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">16 ม.ค.</span>
+                    <span class="day-name">วันศุกร์</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">พญ.เขมิกา, นพ.มากคติ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.ณัฐนันท์</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.วินัย, นพ.ภาณุนันท์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">พญ.เพ็ญแข, นพ.วิสิษฐ์</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEEK 3 -->
+        <div id="week3" class="week-section">
+            <!-- Mon 19 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">19 ม.ค.</span>
+                    <span class="day-name">วันจันทร์</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.ศราวุฒิ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.หทัยภัทร</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.วไลพร</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.สมควร</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.วิสิษฐ์, นพ.กิตติเชษฐ์, พญ.สุพรรณี, พญ.พิชชาภา, นพ.คณา</span></div>
+                    <div class="dept-row"><span class="dept-label">หู คอ จมูก</span><span class="doc-list">นพ.กนกพล</span></div>
+                </div>
+            </div>
+
+            <!-- Tue 20 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">20 ม.ค.</span>
+                    <span class="day-name">วันอังคาร</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.บรรพต</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.ภัทริกาญจน์</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.วไลพร</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.ชุติพงศ์, นพ.ประพันธ์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.อัครวัต, พญ.ธวัลย์, นพ.ตุลภัทร, พญ.ศุภกร, พญ.พัชริดา</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.สุทธตา</span></div>
+                    <div class="dept-row"><span class="dept-label">หู คอ จมูก</span><span class="doc-list">นพ.อนุชา</span></div>
+                </div>
+            </div>
+
+            <!-- Wed 21 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">21 ม.ค.</span>
+                    <span class="day-name">วันพุธ</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.ฐาปกรณ์, นพ.กาญจน์, นพ.สัมฤทธิ์</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.วชิรวุฒิ</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.จตุรัศมิ์, พญ.ภัทธิยา</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">พญ.วิริญจ์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.อนุชิต</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.นพรัตน์</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชผู้ใหญ่</span><span class="doc-list">นพ.สมยศ</span></div>
+                </div>
+            </div>
+
+            <!-- Thu 22 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">22 ม.ค.</span>
+                    <span class="day-name">วันพฤหัสบดี</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.วศิน, พญ.ฐิติภัทร, นพ.ภิญโญ, นพ.สัมฤทธิ์, นพ.มากคติ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.ภูริณัฐ</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.ธนภัทร</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">พญ.เพ็ญแข, พญ.ธวัลย์, นพ.วิสิษฐ์, พญ.สิรินุช</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.ทักษิณา</span></div>
+                </div>
+            </div>
+
+            <!-- Fri 23 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">23 ม.ค.</span>
+                    <span class="day-name">วันศุกร์</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">พญ.เขมิกา, นพ.มากคติ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.ณัฐนันท์</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.วินัย, นพ.ภาณุนันท์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">พญ.สิรินุช, นพ.วิสิษฐ์, พญ.เพ็ญแข</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WEEK 4 -->
+        <div id="week4" class="week-section">
+            <!-- Mon 26 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">26 ม.ค.</span>
+                    <span class="day-name">วันจันทร์</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.บรรพต, นพ.ศราวุฒิ, นพ.ตวงสิทธิ์</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.ภูริณัฐ</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.วไลพร</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.สมควร</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.วิสิษฐ์, พญ.สุพรรณี, พญ.พิชชาภา, นพ.คณา</span></div>
+                </div>
+            </div>
+
+            <!-- Tue 27 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">27 ม.ค.</span>
+                    <span class="day-name">วันอังคาร</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.บรรพต, นพ.สมสิทธิ์</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.ภัทริกาญจน์</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.วไลพร</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.ชุติพงศ์, นพ.ประพันธ์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.อัครวัต, พญ.ธวัลย์, นพ.ตุลภัทร, พญ.ศุภกร, พญ.พัชริดา</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.สุทธตา</span></div>
+                    <div class="dept-row"><span class="dept-label">หู คอ จมูก</span><span class="doc-list">นพ.อนุชา</span></div>
+                </div>
+            </div>
+
+            <!-- Wed 28 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">28 ม.ค.</span>
+                    <span class="day-name">วันพุธ</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.ฐาปกรณ์, นพ.สัมฤทธิ์</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.วชิรวุฒิ</span></div>
+                    <div class="dept-row"><span class="dept-label">กุมารเวช</span><span class="doc-list">พญ.จตุรัศมิ์</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.สรพงษ์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.อนุชิต</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชเด็ก</span><span class="doc-list">พญ.นพรัตน์</span></div>
+                    <div class="dept-row"><span class="dept-label">จิตเวชผู้ใหญ่</span><span class="doc-list">นพ.สมยศ</span></div>
+                </div>
+            </div>
+
+            <!-- Thu 29 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">29 ม.ค.</span>
+                    <span class="day-name">วันพฤหัสบดี</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">นพ.วศิน, พญ.ฐิติภัทร, นพ.สัมฤทธิ์, นพ.มากคติ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">นพ.ภูริณัฐ</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.ธนภัทร</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">พญ.เพ็ญแข, พญ.ธวัลย์, นพ.วิสิษฐ์</span></div>
+                </div>
+            </div>
+
+            <!-- Fri 30 -->
+            <div class="day-card">
+                <div class="card-header">
+                    <span class="date-badge">30 ม.ค.</span>
+                    <span class="day-name">วันศุกร์</span>
+                </div>
+                <div class="card-body">
+                    <div class="dept-row"><span class="dept-label">ศัลยกรรม</span><span class="doc-list">พญ.เขมิกา, นพ.ณัฐวุฒิ, นพ.มากคติ</span></div>
+                    <div class="dept-row"><span class="dept-label">สูติกรรม</span><span class="doc-list">พญ.ณัฐนันท์</span></div>
+                    <div class="dept-row"><span class="dept-label">ออร์โธปิดิกส์</span><span class="doc-list">นพ.วินัย, นพ.ภาณุนันท์</span></div>
+                    <div class="dept-row"><span class="dept-label">อายุรกรรม</span><span class="doc-list">นพ.วิสิษฐ์, พญ.เพ็ญแข</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="remark">* ตารางอาจมีการเปลี่ยนแปลง กรุณาตรวจสอบนัดหมายล่วงหน้า</div>
+
+    </div>
+
+    <footer>
+        &copy; 2026 โรงพยาบาลอุดรธานี
+    </footer>
+
+    <script>
+        function openWeek(btn, weekId) {
+            // Hide all week sections
+            var sections = document.getElementsByClassName('week-section');
+            for (var i = 0; i < sections.length; i++) {
+                sections[i].classList.remove('active');
+            }
+            
+            // Show selected week
+            document.getElementById(weekId).classList.add('active');
+
+            // Update buttons
+            var buttons = document.getElementsByClassName('nav-btn');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            
+            // Activate clicked button
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
